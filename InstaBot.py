@@ -17,6 +17,22 @@ liked_self_url = (BASE_URL + "users/self/media/liked/?access_token=%s") % ACCESS
 
 def main():
     print "Welcome to InstaBot > "
+    ans = True
+    while ans:
+        print """
+                1.Search by user 
+                2.xyyz
+                3.Exit
+                """
+        ans = raw_input("What would you like to do ? ")
+        if ans == "1":
+            search_user()
+        elif ans == "2":
+            exit()
+        elif ans == "3":
+            exit()
+        elif ans != "":
+            print "Invalid choice... try again!"
 
 
 def search_user():
@@ -40,5 +56,4 @@ def search_user():
                     print "User not found !"
                     exit()
 
-
-search_user()
+main()
