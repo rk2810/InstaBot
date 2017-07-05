@@ -58,21 +58,23 @@ def search_user():
     user = raw_input("Enter Username ")
     search_by_user_url = (BASE_URL + "users/search?q=%s&access_token=%s") % (user, ACCESS_TOKEN)
     data = req.get(search_by_user_url).json()
-    if data:
-        with open('data.json', 'w') as outfile:
-            json.dump(data, outfile)
-        f1 = open('data.json')
-        data = json.load(f1)
-        for item in data:
-            if item == 'data':
-                if len(data['data']) > 0:
-                    username = data['data'][0]['id']
-                    print username
-                    DATA.append(username)
-                    print "Username " + user + " found with user ID " + DATA[0] + "."
-                    # selected_user_menu() >> will show menu for found/selected user
-                else:
-                    print "User not found !"
-                    exit()
+    if data['meta']['code'] == 200:
+        if data:
+            with open('data.json', 'w') as outfile:
+                json.dump(data, outfile)
+            f1 = open('data.json')
+            data = json.load(f1)
+            for item in data:
+                if item == 'data':
+                    if len(data['data']) > 0:
+                        username = data['data'][0]['id']
+                        print username
+                        DATA.append(username)
+                        print "Username " + user + " found with user ID " + DATA[0] + "."
+                        # selected_user_menu() >> will show menu for found/selected user
+                    else:
+                        print "User not found !"
+    else:
+        print "Something went wrong, data fetch error :( "
 
 main()
