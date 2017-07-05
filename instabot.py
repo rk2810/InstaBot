@@ -22,25 +22,43 @@ def main():
     while ans:
         print """
                 1.Search by user 
-                2.Get your info
+                2.Get someone's last post
                 3.Exit
                 """
         ans = raw_input("What would you like to do ? ")
         if ans == "1":
             search_user()
         elif ans == "2":
-            self()
+            get_post()
         elif ans == "3":
             exit()
         elif ans != "":
             print "Invalid choice... try again!"
 
 
-def self():
+def get_post():
+    user_id = DATA[0]
+    request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (user_id, ACCESS_TOKEN)
+    print "fetching data of user : " + DATA[0]
+    user_media = req.get(request_url).json()
+
+    if user_media['meta']['code'] == 200:
+        if len(user_media['data']):
+            image_name = user_media['data'][0]['id'] + '.jpeg'
+            image_url = user_media['data'][0]['images']['standard_resolution']['url']
+            urllib.urlretrieve(image_url, image_name)
+            print 'Fetch Successful!'
+        else:
+            print 'Post does not exist!'
+    else:
+        print "Something went wrong, data fetch error :( "
+
+
+def self_last_post():
     print "Fetching your last image : "
     request_url = (BASE_URL + 'users/self/media/recent/?access_token=%s') % ACCESS_TOKEN
     print 'GET request url : %s' % request_url
-    own_media = req.get(request_url).json()
+    own_media = req.get(request_url).json()     # using name convention from acadview slides/ too lazy to refactor
 
     if own_media['meta']['code'] == 200:
         if len(own_media['data']):
@@ -51,7 +69,7 @@ def self():
         else:
             print 'Post does not exist!'
     else:
-        print 'Status code other than 200 received!'
+        print "Something went wrong, data fetch error :( "
 
 
 def search_user():
