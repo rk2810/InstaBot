@@ -84,7 +84,7 @@ def search_user_menu():
                     """
         ans = raw_input("What would you like to do ? ")
         if ans == "1":
-            exit()
+            fetch_media()
         elif ans == "2":
             exit()
         elif ans == "3":
@@ -94,10 +94,32 @@ def search_user_menu():
             print "Invalid choice... try again!"
 
 
+def fetch_media():
+    id = DATA[0]
+
+    request_url = (BASE_URL + "users/%s/media/recent?access_token=%s") % (id, ACCESS_TOKEN)
+    media = req.get(request_url).json()
+    if media:
+        with open('recent_media.json', 'w') as outfile2:
+            json.dump(media, outfile2)
+            f1 = open('recent_media.json')
+        media = json.load(f1)
+        for item in range(0, 1):
+            media_ID = media['data'][item]['id']
+            media_link = media['data'][item]['link']
+            media_type = media['data'][item]['type']
+            media_likes = media['data'][item]['likes']['count']
+            media_user_like = media['data'][item]['user_has_liked']
+            print "Media ID : " + str(media_ID)
+            print "Media Link : " + str(media_link)
+            print " Media type : " + media_type
+            print "Total likes : " + str(media_likes)
+            print "Liked by you : " + str(media_user_like)
+
+
 def fetch_self_media():
     print "Fetching your last image : "
     request_url = (BASE_URL + 'users/self/media/recent/?access_token=%s') % ACCESS_TOKEN
-    print 'GET request url : %s' % request_url
     own_media = req.get(request_url).json()  # using name convention from acadview slides/ too lazy to refactor
 
     if own_media['meta']['code'] == 200:
@@ -131,9 +153,6 @@ def get_post():
         print "Something went wrong, data fetch error :( "
 
 
-# def self_last_post():
-
-
 def search_user():
     user = raw_input("Enter Username ")
     search_by_user_url = (BASE_URL + "users/search?q=%s&access_token=%s") % (user, ACCESS_TOKEN)
@@ -151,7 +170,7 @@ def search_user():
                         print username
                         DATA.append(username)
                         print "Username " + user + " found with user ID " + DATA[0] + "."
-                        # selected_user_menu() >> will show menu for found/selected user
+                        search_user_menu()
                     else:
                         print "User not found !"
     else:
