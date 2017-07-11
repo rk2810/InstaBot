@@ -83,7 +83,8 @@ def search_user_menu():
         print """
                     1.Fetch recent post 
                     2.Like/Unlike recent post
-                    3.Exit
+                    3.Comment test
+                    4.Exit
                     """
         ans = raw_input("What would you like to do ? ")
         if ans == "1":
@@ -91,6 +92,8 @@ def search_user_menu():
         elif ans == "2":
             like_unlike()
         elif ans == "3":
+            post_comments()
+        elif ans == "4":
             print "Exiting !"
             exit()
         elif ans != "":
@@ -98,7 +101,10 @@ def search_user_menu():
 
 
 def like_unlike():
+    print "Fetching latest media !"
     fetch_media()
+    print ""
+    print ""
     media_id = current_media[0]
     quest = int(raw_input('Select what do you want to do:\n'
                           '1. Get no of likes on recent post.\n'
@@ -121,6 +127,10 @@ def like_unlike():
 
 
 def post_comments():
+    print "Fetching latest media !"
+    fetch_media()
+    print ""
+    print ""
     media_id = current_media[0]
 
     quest = int(raw_input('Select what do you want to do:\n'
