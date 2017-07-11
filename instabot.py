@@ -22,18 +22,94 @@ def main():
     while ans:
         print """
                 1.Search by user 
-                2.Get someone's last post
+                2.Fetch your info
                 3.Exit
                 """
         ans = raw_input("What would you like to do ? ")
         if ans == "1":
-            search_user()
+            search_user()    # make an inline menu
         elif ans == "2":
-            get_post()
+            fetch_self_menu()
         elif ans == "3":
+            print "Exiting !"
             exit()
         elif ans != "":
             print "Invalid choice... try again!"
+
+
+def fetch_self_menu():
+    ans = True
+    while ans:
+        print """
+                        1.Your info 
+                        2.Your recent post
+                        3.Exit
+                        """
+        ans = raw_input("What would you like to do ? ")
+        if ans == "1":
+            self_info()
+        elif ans == "2":
+            fetch_self_media()
+        elif ans == "3":
+            print "Exiting !"
+            exit()
+        elif ans != "":
+            print "Invalid choice... try again!"
+
+
+def self_info():
+    request_url = (BASE_URL + 'users/self/?access_token=%s') % ACCESS_TOKEN
+    user_info = req.get(request_url).json()
+    if user_info:
+        with open('user_info.json', 'w') as outfile:
+            json.dump(user_info, outfile)
+            f1 = open('user_info.json')
+
+        user_info = json.load(f1)
+        for item in user_info:
+            if item == 'data':
+                user_id = user_info['data']['id']
+                user_name = user_info['data']['username']
+                print "Username : " + user_name
+                print "User ID : " + user_id
+
+
+def search_user_menu():
+    ans = True
+    while ans:
+        print """
+                    1.Fetch recent post 
+                    2.Fetch recently liked post
+                    3.Exit
+                    """
+        ans = raw_input("What would you like to do ? ")
+        if ans == "1":
+            exit()
+        elif ans == "2":
+            exit()
+        elif ans == "3":
+            print "Exiting !"
+            exit()
+        elif ans != "":
+            print "Invalid choice... try again!"
+
+
+def fetch_self_media():
+    print "Fetching your last image : "
+    request_url = (BASE_URL + 'users/self/media/recent/?access_token=%s') % ACCESS_TOKEN
+    print 'GET request url : %s' % request_url
+    own_media = req.get(request_url).json()  # using name convention from acadview slides/ too lazy to refactor
+
+    if own_media['meta']['code'] == 200:
+        if len(own_media['data']):
+            image_name = own_media['data'][0]['id'] + '.jpeg'
+            image_url = own_media['data'][0]['images']['standard_resolution']['url']
+            urllib.urlretrieve(image_url, image_name)
+            print 'Fetch successful!'
+        else:
+            print 'Post does not exist!'
+    else:
+        print "Something went wrong, data fetch error :( "
 
 
 def get_post():
@@ -48,28 +124,14 @@ def get_post():
             image_url = user_media['data'][0]['images']['standard_resolution']['url']
             urllib.urlretrieve(image_url, image_name)
             print 'Fetch Successful!'
+            search_user_menu()
         else:
             print 'Post does not exist!'
     else:
         print "Something went wrong, data fetch error :( "
 
 
-def self_last_post():
-    print "Fetching your last image : "
-    request_url = (BASE_URL + 'users/self/media/recent/?access_token=%s') % ACCESS_TOKEN
-    print 'GET request url : %s' % request_url
-    own_media = req.get(request_url).json()     # using name convention from acadview slides/ too lazy to refactor
-
-    if own_media['meta']['code'] == 200:
-        if len(own_media['data']):
-            image_name = own_media['data'][0]['id'] + '.jpeg'
-            image_url = own_media['data'][0]['images']['standard_resolution']['url']
-            urllib.urlretrieve(image_url, image_name)
-            print 'Fetch successful!'
-        else:
-            print 'Post does not exist!'
-    else:
-        print "Something went wrong, data fetch error :( "
+# def self_last_post():
 
 
 def search_user():
